@@ -1,0 +1,13 @@
+# Arduino / build output
+build/
+*.bin
+*.uf2
+*.elf
+*.map
+
+# Python
+__pycache__/
+*.pyc
+
+# your own GIFs (keep copyrighted art out of the repo)
+tools/my_gifs/
