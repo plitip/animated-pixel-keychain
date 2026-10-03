@@ -1,12 +1,26 @@
 /*
   Pixel Keychain
   Plays pixel-art animations on a 1.28" round GC9A01 screen (240x240).
-  Press the white BOOTSEL button on the Pico to go to the next animation.
+  The animations live in sprites.h (generate it with tools/gif2keychain.py).
+  Press the board's button to go to the next one:
+    - Beetle ESP32-C6: the BOOT button
+    - Raspberry Pi Pico / Pico 2: the white BOOTSEL button
 
-  Board: Raspberry Pi Pico / Pico 2 (board package "Raspberry Pi Pico/RP2040/RP2350" by Earle Philhower)
-  Lib  : "GFX Library for Arduino" by Moon On Our Nation (Library Manager)
+  Lib: "GFX Library for Arduino" by Moon On Our Nation (Library Manager)
 
-  Wiring (screen -> Pico):
+  ---- DFRobot Beetle ESP32-C6 ----  board package "esp32" by Espressif (3.x),
+  board "DFRobot Beetle ESP32-C6"
+    Screen VCC -> 3V3
+    Screen GND -> GND
+    Screen SCL -> 23
+    Screen SDA -> 22
+    Screen CS  -> 21
+    Screen DC  -> 20
+    Screen RST -> 19
+    Screen BL  -> 7     (only if your screen has a BL pin)
+    (pin 4 is left free: the board uses it to measure the battery)
+
+  ---- Raspberry Pi Pico / Pico 2 ----  board package "Raspberry Pi Pico/RP2040/RP2350" by Earle Philhower
     VCC -> 3V3(OUT) pin 36 | GND -> GND pin 38 | SCL -> GP18 pin 24 | SDA -> GP19 pin 25
     CS  -> GP17 pin 22     | DC  -> GP20 pin 26 | RST -> GP21 pin 27 | BL  -> GP22 pin 29
 */
@@ -14,18 +28,32 @@
 #include "sprites.h"
 
 // ---------------- pins ----------------
-#define TFT_SCK  18
-#define TFT_MOSI 19
-#define TFT_CS   17
-#define TFT_DC   20
-#define TFT_RST  21
-#define TFT_BL   22
+#if defined(ARDUINO_ARCH_ESP32)       // Beetle ESP32-C6
+  #define TFT_SCK  23
+  #define TFT_MOSI 22
+  #define TFT_CS   21
+  #define TFT_DC   20
+  #define TFT_RST  19
+  #define TFT_BL   7
+  #define BUTTON_PIN 9                // BOOT button (pressed = LOW)
+#else                                 // Raspberry Pi Pico / Pico 2
+  #define TFT_SCK  18
+  #define TFT_MOSI 19
+  #define TFT_CS   17
+  #define TFT_DC   20
+  #define TFT_RST  21
+  #define TFT_BL   22
+#endif
 
 // SPI speed. If the picture is glitchy or striped with long jumper wires, change to 20000000.
 #define SPI_SPEED 40000000
 #define BG_COLOR  0x0861              // very dark blue-black
 
+#if defined(ARDUINO_ARCH_ESP32)
+Arduino_DataBus *bus = new Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, GFX_NOT_DEFINED, FSPI);
+#else
 Arduino_DataBus *bus = new Arduino_RPiPicoSPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, GFX_NOT_DEFINED, spi0);
+#endif
 Arduino_GFX *gfx = new Arduino_GC9A01(bus, TFT_RST, 0 /* rotation */, true /* IPS */);
 
 // ---------------- layers ----------------
@@ -160,11 +188,18 @@ bool tick(Layer &L, unsigned long now) {
 
 // ---------------- button ----------------
 bool buttonPressed() {
+#if defined(ARDUINO_ARCH_ESP32)
+  return digitalRead(BUTTON_PIN) == LOW;
+#else
   return BOOTSEL;
+#endif
 }
 
 void setup() {
   Serial.begin(115200);
+#if defined(ARDUINO_ARCH_ESP32)
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+#endif
   pinMode(TFT_BL, OUTPUT);
   digitalWrite(TFT_BL, HIGH);         // backlight on (harmless if your screen has no BL pin)
 
