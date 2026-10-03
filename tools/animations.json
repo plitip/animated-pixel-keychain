@@ -1,0 +1,26 @@
+{
+  "shows": [
+    {
+      "name": "Spirit",
+      "ring": [
+        "#5AC8FF",
+        "#123A80"
+      ],
+      "front": {
+        "file": "tools/examples/spirit.gif",
+        "scale": 3
+      }
+    },
+    {
+      "name": "Heart",
+      "ring": [
+        "#FF5A8C",
+        "#7A0028"
+      ],
+      "front": {
+        "file": "tools/examples/heart.gif",
+        "scale": 1
+      }
+    }
+  ]
+}
