@@ -215,8 +215,10 @@ void setup() {
 
 void loop() {
   static bool wasPressed = false;
+  static unsigned long lastPress = 0;
   bool pressed = buttonPressed();
-  if (pressed && !wasPressed) {   // next animation
+  if (pressed && !wasPressed && millis() - lastPress > 200) {   // next animation
+    lastPress = millis();
     selectShow((show + 1) % SHOW_COUNT);
   }
   wasPressed = pressed;
