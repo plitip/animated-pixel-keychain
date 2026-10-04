@@ -9,6 +9,7 @@ two ring colours. A layer looks like:
 
     {
       "file": "tools/examples/orb.gif",
+      "native_pixel": "auto",     // shrink upscaled pixel art back to real pixels ("auto", a number, or null)
       "crop": [x, y, w, h],       // optional, in (native) pixels
       "frame_step": 1,            // keep every Nth frame (delays are stretched to keep the speed)
       "colors": 254,              // max colours (reduced with median-cut if needed)
@@ -36,6 +37,38 @@ def load(path):
         frames.append(np.array(f.convert("RGBA")))
         delays.append(int(f.info.get("duration", 50)) or 50)
     return frames, delays
+
+
+def detect_native_grid(a, axis_len, other_len, horizontal):
+    """Find how many real pixels fit across an upscaled pixel-art image (works for non-integer upscales)."""
+    best = None
+    for n in range(16, min(axis_len, 400)):
+        p = axis_len / n
+        if p < 1.5:
+            break
+        centres = (p * np.arange(n) + p / 2).astype(int)
+        left = np.clip((centres - p * 0.3).astype(int), 0, axis_len - 1)
+        right = np.clip((centres + p * 0.3).astype(int), 0, axis_len - 1)
+        if horizontal:
+            err = (a[:, left] != a[:, centres]).any(2).mean() + (a[:, right] != a[:, centres]).any(2).mean()
+        else:
+            err = (a[left] != a[centres]).any(2).mean() + (a[right] != a[centres]).any(2).mean()
+        if best is None or err < best[0] - 1e-4:
+            best = (err, n)
+    return best[1]
+
+
+def to_native(frames, native_pixel):
+    h, w = frames[0].shape[:2]
+    if native_pixel == "auto":
+        nx = detect_native_grid(frames[0], w, h, True)
+        ny = detect_native_grid(frames[0], h, w, False)
+    else:
+        nx, ny = round(w / native_pixel), round(h / native_pixel)
+    xs = (w / nx * np.arange(nx) + w / nx / 2).astype(int)
+    ys = (h / ny * np.arange(ny) + h / ny / 2).astype(int)
+    print(f"    native pixel grid: {nx} x {ny} (from {w} x {h})")
+    return [f[ys][:, xs].copy() for f in frames]
 
 
 def reduce_colours(frames, n):
@@ -70,6 +103,8 @@ def mask_to_circle(frames, s256, offx, offy):
 def prepare_layer(spec):
     print(f"  {spec['file']}")
     frames, delays = load(spec["file"])
+    if spec.get("native_pixel"):
+        frames = to_native(frames, spec["native_pixel"])
     if spec.get("crop"):
         x, y, cw, ch = spec["crop"]
         frames = [f[y:y + ch, x:x + cw].copy() for f in frames]

@@ -19,7 +19,8 @@
       ],
       "front": {
         "file": "tools/examples/heart.gif",
-        "scale": 1
+        "native_pixel": "auto",
+        "scale": 8
       }
     }
   ]
