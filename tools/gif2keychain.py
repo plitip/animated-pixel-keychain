@@ -16,7 +16,8 @@ two ring colours. A layer looks like:
       "offset": [0, 0]            // extra nudge in screen pixels
     }
 
-Frames are stored as RLE pairs [count, value]: 0 = transparent, anything else = palette index. Every frame is decoded again after encoding to check it.
+Frames are stored as RLE pairs [count, value]: 0 = transparent, 255 = unchanged from the previous
+frame, anything else = palette index. Every frame is decoded again after encoding to check it.
 """
 import argparse, json, math, sys
 import numpy as np
@@ -106,6 +107,8 @@ def encode(frames):
     for k, f in enumerate(idx):
         offs.append(len(data))
         flat = f.flatten().astype(np.int16)
+        if k > 0:
+            flat = np.where(flat == idx[k - 1].flatten(), SKIP, flat)
         i = 0
         while i < len(flat):
             v, n = flat[i], 1
