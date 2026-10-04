@@ -6,6 +6,11 @@
         "#5AC8FF",
         "#123A80"
       ],
+      "back": {
+        "file": "tools/examples/ring.gif",
+        "scale": 1.14,
+        "colors": 12
+      },
       "front": {
         "file": "tools/examples/spirit.gif",
         "scale": 3
