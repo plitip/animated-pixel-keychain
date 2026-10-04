@@ -2,31 +2,14 @@
   "shows": [
     {
       "name": "Spirit",
-      "ring": [
-        "#5AC8FF",
-        "#123A80"
-      ],
-      "back": {
-        "file": "tools/examples/ring.gif",
-        "scale": 1.14,
-        "colors": 12
-      },
-      "front": {
-        "file": "tools/examples/spirit.gif",
-        "scale": 3
-      }
+      "ring": ["#5AC8FF", "#123A80"],
+      "back":  { "file": "tools/examples/ring.gif", "radius": 96, "center": [100, 100], "colors": 12 },
+      "front": { "file": "tools/examples/spirit.gif", "scale": 3 }
     },
     {
       "name": "Heart",
-      "ring": [
-        "#FF5A8C",
-        "#7A0028"
-      ],
-      "front": {
-        "file": "tools/examples/heart.gif",
-        "native_pixel": "auto",
-        "scale": 8
-      }
+      "ring": ["#FF5A8C", "#7A0028"],
+      "front": { "file": "tools/examples/heart.gif", "native_pixel": "auto", "scale": "fit" }
     }
   ]
 }

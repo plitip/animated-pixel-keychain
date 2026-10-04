@@ -13,7 +13,9 @@ two ring colours. A layer looks like:
       "crop": [x, y, w, h],       // optional, in (native) pixels
       "frame_step": 1,            // keep every Nth frame (delays are stretched to keep the speed)
       "colors": 254,              // max colours (reduced with median-cut if needed)
-      "scale": 1,                 // size on screen, e.g. 2 or 1.45
+      "scale": "fit",             // "fit" = biggest that fits the circle, or a number like 1.45
+      "radius": null,             // if set: scale so a circle of this radius (source px) sits on the screen edge
+      "center": null,             // [cx, cy] source point to put at the screen centre (used with "radius")
       "offset": [0, 0]            // extra nudge in screen pixels
     }
 
@@ -90,6 +92,37 @@ def placement(w, h, s256, offx, offy):
     return (SCREEN - ws) // 2 + offx, (SCREEN - hs) // 2 + offy
 
 
+def coverage(frames):
+    m = np.zeros(frames[0].shape[:2])
+    for f in frames:
+        m += f[:, :, 3] >= 128
+    return m
+
+
+def fit(frames, max_clip=0.005):
+    """Biggest scale (and centring nudge) where at most max_clip of the visible pixels fall outside the circle."""
+    m = coverage(frames)
+    ys, xs = np.nonzero(m)
+    wts = m[ys, xs]
+    if len(xs) > 4000:                      # subsample big sprites to keep this quick
+        keep = np.linspace(0, len(xs) - 1, 4000).astype(int)
+        ys, xs, wts = ys[keep], xs[keep], wts[keep]
+    h, w = m.shape
+    best = (256, 0, 0)
+    for s in np.arange(0.5, 8.01, 0.05):
+        found = None
+        for dx in range(-40, 41, 4):
+            for dy in range(-40, 41, 4):
+                r = np.hypot((xs + 0.5 - w / 2) * s + dx, (ys + 0.5 - h / 2) * s + dy)
+                c = wts[r > VISIBLE_R].sum() / wts.sum()
+                if c <= max_clip and (found is None or abs(dx) + abs(dy) < found[0]):
+                    found = (abs(dx) + abs(dy), dx, dy)
+        if found is None:
+            break
+        best = (round(s * 256), found[1], found[2])
+    return best
+
+
 def mask_to_circle(frames, s256, offx, offy):
     h, w = frames[0].shape[:2]
     x0, y0 = placement(w, h, s256, offx, offy)
@@ -116,7 +149,17 @@ def prepare_layer(spec):
         frames = reduce_colours(frames, ncol)
     h, w = frames[0].shape[:2]
     offx, offy = spec.get("offset", [0, 0])
-    s256 = round(float(spec.get("scale", 1)) * 256)
+    if spec.get("radius"):
+        s256 = round((VISIBLE_R - 1) / spec["radius"] * 256)
+        cx, cy = spec.get("center", [w / 2, h / 2])
+        ws = (w * s256 + 255) // 256
+        offx += round(120 - cx * s256 / 256 - (SCREEN - ws) // 2)
+        offy += round(120 - cy * s256 / 256 - (SCREEN - ((h * s256 + 255) // 256)) // 2)
+    elif spec.get("scale", "fit") == "fit":
+        s256, fx, fy = fit(frames)
+        offx, offy = offx + fx, offy + fy
+    else:
+        s256 = round(float(spec["scale"]) * 256)
     frames = mask_to_circle(frames, s256, offx, offy)
     print(f"    {len(frames)} frames, {w}x{h}, scale {s256 / 256:.2f}x, offset ({offx},{offy})")
     return frames, delays, s256, offx, offy
