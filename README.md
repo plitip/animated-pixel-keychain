@@ -20,11 +20,6 @@ The included demo animations, rendered with `tools/preview.py`:
   <img src="media/preview_heart.gif" width="240" alt="Heart animation on the round screen">
 </p>
 
-| | | |
-|---|---|---|
-| <!-- TODO --> ![wiring](media/build_wiring.jpg) | <!-- TODO --> ![soldering](media/build_soldering.jpg) | <!-- TODO --> ![finished](media/build_finished.jpg) |
-| Wiring the screen | Soldering the Beetle | Finished keychain |
-
 ## Features
 
 - **Smooth pixel-art animations** on a 240x240 round IPS screen
