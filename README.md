@@ -117,7 +117,6 @@ tools/gif2keychain.py       GIF → sprites.h converter
 tools/preview.py            renders what the screen will show
 tools/animations.json       which GIFs to use and how
 tools/examples/             original demo animations
-case/                       3D-printable case (script + STL)
 docs/                       parts list, wiring & soldering
 media/                      photos, videos, previews
 ```
