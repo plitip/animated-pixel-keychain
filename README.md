@@ -4,18 +4,20 @@ A tiny keychain with a 1.28" round screen that plays pixel-art animations. Press
 the next one. It runs on a DFRobot Beetle ESP32-C6 (or a Raspberry Pi Pico) and is powered over USB-C -
 plug it into a phone charger, power bank or laptop.
 
-<!-- TODO: replace with your own video / GIF of the real keychain -->
+<p align="center">
+  <img src="media/demo.gif" width="300" alt="The keychain playing an animation">
+</p>
+<p align="center"><i>The real thing, running on the Beetle ESP32-C6 (<a href="media/demo.mp4">video</a>).</i></p>
+
+## Demo
+
+The included demo animations, rendered with `tools/preview.py`:
+
 <p align="center">
   <img src="media/preview_spirit.gif" width="240" alt="Spirit animation on the round screen">
   &nbsp;&nbsp;
   <img src="media/preview_heart.gif" width="240" alt="Heart animation on the round screen">
 </p>
-<p align="center"><i>Demo animations rendered with <code>tools/preview.py</code>. Real-hardware video below.</i></p>
-
-## Demo
-
-<!-- TODO: drag your video into this README on GitHub (it uploads it for you), or put it in media/ and link it -->
-https://github.com/USER/REPO/assets/VIDEO_ID
 
 | | | |
 |---|---|---|
