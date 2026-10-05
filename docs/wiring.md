@@ -13,7 +13,7 @@
 | RST | 19 |
 | BL (only if your screen has it) | 7 |
 
-Pin **4** is left free on purpose - the Beetle uses it to measure the battery voltage.
+Pin **4** is left free on purpose - on the Beetle it's wired to the battery-voltage divider.
 
 ## Screen -> Raspberry Pi Pico / Pico 2
 
@@ -54,7 +54,9 @@ screen stays plug-in.
 
 A dull ball = not enough heat, just reheat it. Two pins joined = drag the clean hot tip between them.
 
-## Battery
+## Power
 
-Last step, after everything works on USB. Unplug USB, then solder the battery's red wire to **BAT** and
-black to **GND**. Never touch the iron to the battery itself. The Beetle charges it over USB-C.
+It's powered through the board's USB-C port, so no battery is needed.
+
+*Optional:* to make it battery-powered, solder a 3.7V LiPo's red wire to the Beetle's **BAT** pin and black
+to **GND** (USB unplugged, and never touch the iron to the battery). The Beetle charges it over USB-C.

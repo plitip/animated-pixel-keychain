@@ -1,8 +1,8 @@
 # Animated Pixel Keychain
 
 A tiny keychain with a 1.28" round screen that plays pixel-art animations. Press the button to switch to
-the next one. It runs on a DFRobot Beetle ESP32-C6 (or a Raspberry Pi Pico), charges over USB-C, and lasts
-hours on a small LiPo.
+the next one. It runs on a DFRobot Beetle ESP32-C6 (or a Raspberry Pi Pico) and is powered over USB-C -
+plug it into a phone charger, power bank or laptop.
 
 <!-- TODO: replace with your own video / GIF of the real keychain -->
 <p align="center">
@@ -29,7 +29,7 @@ https://github.com/USER/REPO/assets/VIDEO_ID
 - **Two layers per animation**, each with its own frame timer (e.g. a character inside a spinning aura)
 - **Any size** - layers are scaled on the device, so a small sprite can fill the screen without taking more flash
 - **Bring your own GIFs** - one Python script converts them, fits them to the circle and checks the result
-- **Runs on two boards** - Beetle ESP32-C6 (tiny, built-in battery charging) or Raspberry Pi Pico / Pico 2
+- **Runs on two boards** - Beetle ESP32-C6 (tiny, USB-C) or Raspberry Pi Pico / Pico 2
 - **Preview on your PC** before flashing
 - **3D-printable case**
 
@@ -39,9 +39,8 @@ https://github.com/USER/REPO/assets/VIDEO_ID
 |---|---|
 | 1.28" round GC9A01 display (240x240, SPI) | 55 |
 | DFRobot Beetle ESP32-C6 | 29 |
-| 3.7V LiPo battery | 15 |
-| Jumper wires, slide switch, header pins | ~13 |
-| **Total** | **~112** |
+| Jumper wires, header pins | ~12 |
+| **Total** | **~96** |
 
 Full list with links: [docs/parts.md](docs/parts.md)
 
@@ -58,7 +57,7 @@ Full list with links: [docs/parts.md](docs/parts.md)
 | RST | 19 | GP21 |
 | BL *(if present)* | 7 | GP22 |
 
-Soldering guide, battery and pinout details: [docs/wiring.md](docs/wiring.md)
+Soldering guide and pinout details: [docs/wiring.md](docs/wiring.md)
 
 ## Flashing
 
@@ -104,8 +103,9 @@ Put your own GIFs in `tools/my_gifs/` (it's git-ignored, so you don't accidental
 ## 3D-printed case
 
 `case/` has a two-part case (front shell + snap-in lid), the script that generates it and the STL files.
-It's designed around the Pico + 1000 mAh battery (about 46 x 65 x 26 mm). With the Beetle and a smaller
-battery it can shrink to roughly 42 x 45 x 15 mm - change the numbers at the top of `case/case.py`.
+It was first designed around a Pico with room for a battery (about 46 x 65 x 26 mm). My build ended up
+USB-powered with the Beetle, which fits in something much smaller - change the numbers at the top of
+`case/case.py` to shrink it.
 
 <p align="center"><img src="case/case_preview.png" width="700" alt="Case preview"></p>
 
