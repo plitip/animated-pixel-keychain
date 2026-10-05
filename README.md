@@ -8,6 +8,7 @@ plug it into a phone charger, power bank or laptop.
   <img src="media/demo.gif" width="300" alt="The keychain playing an animation">
 </p>
 <p align="center"><i>The real thing, running on the Beetle ESP32-C6 (<a href="media/demo.mp4">video</a>).</i></p>
+<p align="center"><sub>(this video is not AI, I just have a sixth finger)</sub></p>
 
 ## Demo
 
@@ -33,7 +34,6 @@ The included demo animations, rendered with `tools/preview.py`:
 - **Bring your own GIFs** - one Python script converts them, fits them to the circle and checks the result
 - **Runs on two boards** - Beetle ESP32-C6 (tiny, USB-C) or Raspberry Pi Pico / Pico 2
 - **Preview on your PC** before flashing
-- **3D-printable case**
 
 ## Hardware
 
@@ -102,15 +102,6 @@ Each entry in `tools/animations.json` is a **show** with an optional `back` laye
 
 Put your own GIFs in `tools/my_gifs/` (it's git-ignored, so you don't accidentally publish art that isn't yours).
 
-## 3D-printed case
-
-`case/` has a two-part case (front shell + snap-in lid), the script that generates it and the STL files.
-It was first designed around a Pico with room for a battery (about 46 x 65 x 26 mm). My build ended up
-USB-powered with the Beetle, which fits in something much smaller - change the numbers at the top of
-`case/case.py` to shrink it.
-
-<p align="center"><img src="case/case_preview.png" width="700" alt="Case preview"></p>
-
 ## How it works
 
 - **Frames are pre-decoded on the PC**, not on the microcontroller. Each frame is stored as run-length pairs
@@ -122,16 +113,6 @@ USB-powered with the Beetle, which fits in something much smaller - change the n
   different lengths loop smoothly together.
 - **Scaling happens while drawing** (fixed-point, 1/256 steps), so enlarging a sprite costs no extra flash.
 - `tools/gif2keychain.py` decodes every frame again after encoding to make sure it's pixel-perfect.
-
-## Troubleshooting
-
-| Problem | Fix |
-|---|---|
-| Upload works but the screen stays black | Press **RST**. Check VCC → 3V3 and GND. |
-| Screen lights up but shows nothing / garbage | One of SCL, SDA, CS, DC, RST is swapped - recheck the table |
-| Stripes or glitches | Long jumper wires: set `SPI_SPEED` to `20000000` in the .ino |
-| No port in the Arduino IDE | Try another USB-C cable (data, not charge-only), or BOOT + RST |
-| "Sketch too big" | Use `frame_step` / `colors` in `animations.json`, or Tools → Partition Scheme → Huge APP |
 
 ## Project structure
 
