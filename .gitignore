@@ -9,5 +9,5 @@ build/
 __pycache__/
 *.pyc
 
-# your own GIFs (keep copyrighted art out of the repo)
+# my own gifs in the video are copyright
 tools/my_gifs/
